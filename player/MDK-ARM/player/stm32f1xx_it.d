@@ -29,3 +29,12 @@ player\stm32f1xx_it.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim.h
 player\stm32f1xx_it.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_tim_ex.h
 player\stm32f1xx_it.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
 player\stm32f1xx_it.o: ../Inc/stm32f1xx_it.h
+player\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+player\stm32f1xx_it.o: ../Inc/FreeRTOSConfig.h
+player\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+player\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+player\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+player\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3/portmacro.h
+player\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+player\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+player\stm32f1xx_it.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
