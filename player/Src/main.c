@@ -72,11 +72,11 @@ void trc(char *fmt, ...)
     va_start(li, fmt);
     vsprintf(buf, fmt, li);
     va_end(li);
-    HAL_UART_Transmit_IT(&huart1, (uint8_t *)buf, strlen(buf));
+    HAL_UART_Transmit(&huart1, (uint8_t *)buf, strlen(buf), 100);
 }
 
-#define _TRC(f, l, fmt, ...) trc("%s %d:"fmt,f,l,__VA_ARGS__)
-#define TRACE(...) _TRC(__FILE__,__LINE__,__VA_ARGS__)
+#define _TRC(...) trc(__VA_ARGS__)
+#define TRACE(...) _TRC(__VA_ARGS__)
 
 /* USER CODE END PFP */
 
@@ -361,11 +361,11 @@ static void MX_GPIO_Init(void)
 static void sd_read_bytes(uint8_t *bytes, uint8_t len)
 {
     uint8_t tx = 0xFF; 
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+    //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
     while(len-- > 0) {
         HAL_SPI_TransmitReceive(&hspi1, &tx, bytes++, 1, 100);    
     }
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+    //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
 }
 
 static void sd_sel()
@@ -380,8 +380,9 @@ static void sd_unsel()
 
 static void sd_write_bytes(uint8_t *bytes, uint8_t len)
 {
+    uint8_t rx;
     while(len-- > 0) {
-        HAL_SPI_TransmitReceive(&hspi1, bytes++, 0, 1, 100);    
+        HAL_SPI_TransmitReceive(&hspi1, bytes++, &rx, 1, 100);
     }
 }
 
@@ -390,7 +391,7 @@ static void sd_wait_busy()
     uint8_t busy = 0x00;
     do {
         sd_read_bytes(&busy, 1);
-    } while(busy != 0xFF);
+    } while(busy == 0xFF);
 }
 
 void StartDefaultTask(void *argument)
@@ -399,18 +400,58 @@ void StartDefaultTask(void *argument)
   MX_FATFS_Init();
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
+    osDelay(100);
     uint8_t wb = 0xFF;
     sd_unsel();
+
     for(uint8_t it = 0; it < 10; it++) {
         sd_write_bytes(&wb, 1);
     }
     sd_sel();
+
+    uint8_t cmd0[] = {0x40, 0x00, 0x00, 0x00, 0x00, 0x95};
+    sd_write_bytes(cmd0, 6);
+
+    uint8_t b = 0x01;
+    do {
+        sd_read_bytes(&b, 1);
+    } while(b != 0x01);
+
+    uint8_t cmd8[] = {0x48, 0x00, 0x00, 0x01, 0xAA, 0x87};
+    sd_write_bytes(cmd8, 6);
+    do {
+        sd_read_bytes(&b, 1);
+    } while((b != 0x01) && (b != 0x04));
+
+    if(b == 1) {
+        uint8_t status = 0xFF;
+        do {
+            
+            uint8_t cmd55[] = {0x77, 0x00, 0x00, 0x00, 0x00, 0x00};
+            sd_write_bytes(cmd55, 6);
+            do {
+osDelay(100);
+TRACE("sd cmd55 answer: %X\r\n", b);
+                sd_read_bytes(&b, 1);
+            } while(b != 0x01);
+            uint8_t cmd41[] = {0x69, 0x40, 0x00, 0x00, 0x00, 0xFF};
+            sd_write_bytes(cmd41, 6);
+            
+            // 0xFF shift to 1 byte
+            sd_read_bytes(&status, 1);
+            
+            sd_read_bytes(&status, 1);
+osDelay(100);
+TRACE("sd cmd41 status: %X\r\n", b);
+        } while(0&&status != 0x00);
+        sd_unsel();
+    }
+    
   for(;;)
   {
     osDelay(100);
-    uint8_t b = 0x00;
-        sd_read_bytes(&b, 1);
-        sd_wait_busy();
+    
+        //sd_wait_busy();
         TRACE("sd readed: %X\r\n", b);
   }
   /* USER CODE END 5 */ 
