@@ -5,7 +5,6 @@
 
 #include <stdlib.h>		/* ANSI memory controls */
 #include "../ff.h"
-#include "cmsis_os.h"
 
 #if _FS_REENTRANT
 /*-----------------------------------------------------------------------
@@ -23,8 +22,8 @@ int ff_cre_syncobj (	/* TRUE:Function succeeded, FALSE:Could not create due to a
 {
   int ret;
   
-//  osSemaphoreDef(SEM);
-  *sobj = osSemaphoreNew(22, 1, NULL);		
+  osSemaphoreDef(SEM);
+  *sobj = osSemaphoreNew(2, 1, 0);		
   ret = (*sobj != NULL);
   
   return ret;

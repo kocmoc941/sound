@@ -20,11 +20,12 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "cmsis_os.h"
-#include "fatfs.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "../sd/sdcard.h"
+#include "binary.h"
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -51,7 +52,6 @@ TIM_HandleTypeDef htim1;
 
 UART_HandleTypeDef huart1;
 
-osThreadId_t defaultTaskHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -62,8 +62,6 @@ static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_USART1_UART_Init(void);
-void StartDefaultTask(void *argument);
-
 /* USER CODE BEGIN PFP */
 void trc(char *fmt, ...)
 {
@@ -121,44 +119,30 @@ int main(void)
 
   /* USER CODE END 2 */
 
-  osKernelInitialize();
-
-  /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
-
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
-
-  /* Create the thread(s) */
-  /* definition and creation of defaultTask */
-  const osThreadAttr_t defaultTask_attributes = {
-    .name = "defaultTask",
-    .priority = (osPriority_t) osPriorityNormal,
-    .stack_size = 128
-  };
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
-
-  /* Start scheduler */
-  osKernelStart();
-  
-  /* We should never get here as control is now taken by the scheduler */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+    TRACE("wav length %u\r\n", sizeof(wav));
+
+    TRACE("SDCARD_Init %d\r\n", SDCARD_Init());
+    uint8_t buff[512] = {0};
+    uint16_t cnt_sec = sizeof(wav)/512;
+    uint16_t it_sec = 1;
+
+    for(it_sec = 0; it_sec < 1; it_sec++) {
+        TRACE("SDCARD_WriteBegin %04X blocks %u\r\n", SDCARD_WriteBegin(it_sec), it_sec);
+        TRACE("SDCARD_WriteData %04X\r\n", SDCARD_WriteData(&wav[it_sec*512])); // sizeof(buff) == 512!
+        TRACE("SDCARD_WriteEnd %04X\r\n", SDCARD_WriteEnd());
+    }
+
+    memset(buff, 0, 512);
+    TRACE("SDCARD_ReadBegin %04X sector %u\r\n", SDCARD_ReadBegin(it_sec - 1), it_sec - 1);
+    TRACE("SDCARD_ReadData %04X\r\n", SDCARD_ReadData(buff)); // sizeof(buff) == 512!
+    TRACE("SDCARD_ReadEnd %04X\r\n", SDCARD_ReadEnd());
+
+    for(uint16_t it = 0; it < 512; it+=4) {
+        TRACE("sector N#%04X four byte %04u data %04X\r\n", it_sec - 1, it, *(uint32_t *)&buff[it]);
+    }
+
   while (1)
   {
     /* USER CODE END WHILE */
@@ -350,112 +334,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
-
-/* USER CODE BEGIN Header_StartDefaultTask */
-/**
-  * @brief  Function implementing the defaultTask thread.
-  * @param  argument: Not used 
-  * @retval None
-  */
-/* USER CODE END Header_StartDefaultTask */
-static void sd_read_bytes(uint8_t *bytes, uint8_t len)
-{
-    uint8_t tx = 0xFF; 
-    //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-    while(len-- > 0) {
-        HAL_SPI_TransmitReceive(&hspi1, &tx, bytes++, 1, 100);    
-    }
-    //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-}
-
-static void sd_sel()
-{
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-}
-
-static void sd_unsel()
-{
-    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-}
-
-static void sd_write_bytes(uint8_t *bytes, uint8_t len)
-{
-    uint8_t rx;
-    while(len-- > 0) {
-        HAL_SPI_TransmitReceive(&hspi1, bytes++, &rx, 1, 100);
-    }
-}
-
-static void sd_wait_busy()
-{
-    uint8_t busy = 0x00;
-    do {
-        sd_read_bytes(&busy, 1);
-    } while(busy == 0xFF);
-}
-
-void StartDefaultTask(void *argument)
-{
-  /* init code for FATFS */
-  MX_FATFS_Init();
-  /* USER CODE BEGIN 5 */
-  /* Infinite loop */
-    osDelay(100);
-    uint8_t wb = 0xFF;
-    sd_unsel();
-
-    for(uint8_t it = 0; it < 10; it++) {
-        sd_write_bytes(&wb, 1);
-    }
-    sd_sel();
-
-    uint8_t cmd0[] = {0x40, 0x00, 0x00, 0x00, 0x00, 0x95};
-    sd_write_bytes(cmd0, 6);
-
-    uint8_t b = 0x01;
-    do {
-        sd_read_bytes(&b, 1);
-    } while(b != 0x01);
-
-    uint8_t cmd8[] = {0x48, 0x00, 0x00, 0x01, 0xAA, 0x87};
-    sd_write_bytes(cmd8, 6);
-    do {
-        sd_read_bytes(&b, 1);
-    } while((b != 0x01) && (b != 0x04));
-
-    if(b == 1) {
-        uint8_t status = 0xFF;
-        do {
-            
-            uint8_t cmd55[] = {0x77, 0x00, 0x00, 0x00, 0x00, 0x00};
-            sd_write_bytes(cmd55, 6);
-            do {
-osDelay(100);
-TRACE("sd cmd55 answer: %X\r\n", b);
-                sd_read_bytes(&b, 1);
-            } while(b != 0x01);
-            uint8_t cmd41[] = {0x69, 0x40, 0x00, 0x00, 0x00, 0xFF};
-            sd_write_bytes(cmd41, 6);
-            
-            // 0xFF shift to 1 byte
-            sd_read_bytes(&status, 1);
-            
-            sd_read_bytes(&status, 1);
-osDelay(100);
-TRACE("sd cmd41 status: %X\r\n", b);
-        } while(0&&status != 0x00);
-        sd_unsel();
-    }
-    
-  for(;;)
-  {
-    osDelay(100);
-    
-        //sd_wait_busy();
-        TRACE("sd readed: %X\r\n", b);
-  }
-  /* USER CODE END 5 */ 
-}
 
 /**
   * @brief  Period elapsed callback in non blocking mode
