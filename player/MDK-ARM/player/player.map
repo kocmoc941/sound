@@ -116,12 +116,8 @@ Section Cross References
     main.o(i.main) refers to main.o(i.trc) for trc
     main.o(i.main) refers to sdcard.o(i.SDCARD_Init) for SDCARD_Init
     main.o(i.main) refers to memseta.o(.text) for __aeabi_memclr4
-    main.o(i.main) refers to sdcard.o(i.SDCARD_WriteBegin) for SDCARD_WriteBegin
-    main.o(i.main) refers to sdcard.o(i.SDCARD_WriteData) for SDCARD_WriteData
-    main.o(i.main) refers to sdcard.o(i.SDCARD_WriteEnd) for SDCARD_WriteEnd
-    main.o(i.main) refers to sdcard.o(i.SDCARD_ReadBegin) for SDCARD_ReadBegin
-    main.o(i.main) refers to sdcard.o(i.SDCARD_ReadData) for SDCARD_ReadData
-    main.o(i.main) refers to sdcard.o(i.SDCARD_ReadEnd) for SDCARD_ReadEnd
+    main.o(i.main) refers to sdcard.o(i.SDCARD_WriteSingleBlock) for SDCARD_WriteSingleBlock
+    main.o(i.main) refers to sdcard.o(i.SDCARD_ReadSingleBlock) for SDCARD_ReadSingleBlock
     main.o(i.main) refers to main.o(.bss) for .bss
     main.o(i.main) refers to main.o(.data) for .data
     main.o(i.trc) refers to memseta.o(.text) for __aeabi_memclr4
@@ -674,8 +670,12 @@ Removing Unused input sections from the image.
     Removing sdcard.o(.revsh_text), (4 bytes).
     Removing sdcard.o(.rrx_text), (6 bytes).
     Removing sdcard.o(i.SDCARD_GetBlocksNumber), (188 bytes).
-    Removing sdcard.o(i.SDCARD_ReadSingleBlock), (176 bytes).
-    Removing sdcard.o(i.SDCARD_WriteSingleBlock), (220 bytes).
+    Removing sdcard.o(i.SDCARD_ReadBegin), (108 bytes).
+    Removing sdcard.o(i.SDCARD_ReadData), (82 bytes).
+    Removing sdcard.o(i.SDCARD_ReadEnd), (76 bytes).
+    Removing sdcard.o(i.SDCARD_WriteBegin), (108 bytes).
+    Removing sdcard.o(i.SDCARD_WriteData), (124 bytes).
+    Removing sdcard.o(i.SDCARD_WriteEnd), (64 bytes).
     Removing main.o(.rev16_text), (4 bytes).
     Removing main.o(.revsh_text), (4 bytes).
     Removing main.o(.rrx_text), (6 bytes).
@@ -1088,7 +1088,7 @@ Removing Unused input sections from the image.
     Removing system_stm32f1xx.o(.rrx_text), (6 bytes).
     Removing system_stm32f1xx.o(i.SystemCoreClockUpdate), (104 bytes).
 
-418 unused section(s) (total 24974 bytes) removed from the image.
+422 unused section(s) (total 25140 bytes) removed from the image.
 
 ==============================================================================
 
@@ -1120,22 +1120,22 @@ Image Symbol Table
     ../Src/system_stm32f1xx.c                0x00000000   Number         0  system_stm32f1xx.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  uldiv.o ABSOLUTE
     ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
-    ../clib/microlib/longlong.c              0x00000000   Number         0  llsshr.o ABSOLUTE
-    ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
     ../clib/microlib/longlong.c              0x00000000   Number         0  llushr.o ABSOLUTE
+    ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
+    ../clib/microlib/longlong.c              0x00000000   Number         0  llsshr.o ABSOLUTE
     ../clib/microlib/printf/printf.c         0x00000000   Number         0  printfa.o ABSOLUTE
     ../clib/microlib/stdio/fputc.c           0x00000000   Number         0  fputc.o ABSOLUTE
     ../clib/microlib/stdio/semi.s            0x00000000   Number         0  semi.o ABSOLUTE
@@ -1193,8 +1193,8 @@ Image Symbol Table
     .text                                    0x08000168   Section        0  strlen.o(.text)
     .text                                    0x08000176   Section        0  uidiv.o(.text)
     .text                                    0x080001a2   Section        0  uldiv.o(.text)
-    .text                                    0x08000204   Section        0  iusefp.o(.text)
     .text                                    0x08000204   Section        0  dadd.o(.text)
+    .text                                    0x08000204   Section        0  iusefp.o(.text)
     .text                                    0x08000352   Section        0  dmul.o(.text)
     .text                                    0x08000436   Section        0  ddiv.o(.text)
     .text                                    0x08000514   Section        0  dfixul.o(.text)
@@ -1257,85 +1257,81 @@ Image Symbol Table
     i.NMI_Handler                            0x08001b5a   Section        0  stm32f1xx_it.o(i.NMI_Handler)
     i.PendSV_Handler                         0x08001b5c   Section        0  stm32f1xx_it.o(i.PendSV_Handler)
     i.SDCARD_Init                            0x08001b60   Section        0  sdcard.o(i.SDCARD_Init)
-    i.SDCARD_ReadBegin                       0x08001cc0   Section        0  sdcard.o(i.SDCARD_ReadBegin)
-    i.SDCARD_ReadBytes                       0x08001d2c   Section        0  sdcard.o(i.SDCARD_ReadBytes)
-    SDCARD_ReadBytes                         0x08001d2d   Thumb Code    44  sdcard.o(i.SDCARD_ReadBytes)
-    i.SDCARD_ReadData                        0x08001d5c   Section        0  sdcard.o(i.SDCARD_ReadData)
-    i.SDCARD_ReadEnd                         0x08001db0   Section        0  sdcard.o(i.SDCARD_ReadEnd)
-    i.SDCARD_ReadR1                          0x08001dfc   Section        0  sdcard.o(i.SDCARD_ReadR1)
-    SDCARD_ReadR1                            0x08001dfd   Thumb Code    40  sdcard.o(i.SDCARD_ReadR1)
-    i.SDCARD_Select                          0x08001e28   Section        0  sdcard.o(i.SDCARD_Select)
-    SDCARD_Select                            0x08001e29   Thumb Code    10  sdcard.o(i.SDCARD_Select)
-    i.SDCARD_Unselect                        0x08001e38   Section        0  sdcard.o(i.SDCARD_Unselect)
-    i.SDCARD_WaitDataToken                   0x08001e48   Section        0  sdcard.o(i.SDCARD_WaitDataToken)
-    SDCARD_WaitDataToken                     0x08001e49   Thumb Code    48  sdcard.o(i.SDCARD_WaitDataToken)
-    i.SDCARD_WaitNotBusy                     0x08001e7c   Section        0  sdcard.o(i.SDCARD_WaitNotBusy)
-    SDCARD_WaitNotBusy                       0x08001e7d   Thumb Code    32  sdcard.o(i.SDCARD_WaitNotBusy)
-    i.SDCARD_WriteBegin                      0x08001e9c   Section        0  sdcard.o(i.SDCARD_WriteBegin)
-    i.SDCARD_WriteData                       0x08001f08   Section        0  sdcard.o(i.SDCARD_WriteData)
-    i.SDCARD_WriteEnd                        0x08001f84   Section        0  sdcard.o(i.SDCARD_WriteEnd)
-    i.SPI1_IRQHandler                        0x08001fc4   Section        0  stm32f1xx_it.o(i.SPI1_IRQHandler)
-    i.SPI_DMAAbortOnError                    0x08001fd0   Section        0  stm32f1xx_hal_spi.o(i.SPI_DMAAbortOnError)
-    SPI_DMAAbortOnError                      0x08001fd1   Thumb Code    16  stm32f1xx_hal_spi.o(i.SPI_DMAAbortOnError)
-    i.SPI_EndRxTxTransaction                 0x08001fe0   Section        0  stm32f1xx_hal_spi.o(i.SPI_EndRxTxTransaction)
-    SPI_EndRxTxTransaction                   0x08001fe1   Thumb Code    32  stm32f1xx_hal_spi.o(i.SPI_EndRxTxTransaction)
-    i.SPI_WaitFlagStateUntilTimeout          0x08002000   Section        0  stm32f1xx_hal_spi.o(i.SPI_WaitFlagStateUntilTimeout)
-    SPI_WaitFlagStateUntilTimeout            0x08002001   Thumb Code   148  stm32f1xx_hal_spi.o(i.SPI_WaitFlagStateUntilTimeout)
-    i.SVC_Handler                            0x08002094   Section        0  stm32f1xx_it.o(i.SVC_Handler)
-    i.SystemClock_Config                     0x08002096   Section        0  main.o(i.SystemClock_Config)
-    i.SystemInit                             0x080020e4   Section        0  system_stm32f1xx.o(i.SystemInit)
-    i.TIM1_UP_IRQHandler                     0x0800212c   Section        0  stm32f1xx_it.o(i.TIM1_UP_IRQHandler)
-    i.TIM4_IRQHandler                        0x08002138   Section        0  stm32f1xx_it.o(i.TIM4_IRQHandler)
-    i.TIM_Base_SetConfig                     0x08002144   Section        0  stm32f1xx_hal_tim.o(i.TIM_Base_SetConfig)
-    i.TIM_ETR_SetConfig                      0x080021b0   Section        0  stm32f1xx_hal_tim.o(i.TIM_ETR_SetConfig)
-    i.TIM_ITRx_SetConfig                     0x080021c4   Section        0  stm32f1xx_hal_tim.o(i.TIM_ITRx_SetConfig)
-    TIM_ITRx_SetConfig                       0x080021c5   Thumb Code    16  stm32f1xx_hal_tim.o(i.TIM_ITRx_SetConfig)
-    i.TIM_TI1_ConfigInputStage               0x080021d4   Section        0  stm32f1xx_hal_tim.o(i.TIM_TI1_ConfigInputStage)
-    TIM_TI1_ConfigInputStage                 0x080021d5   Thumb Code    34  stm32f1xx_hal_tim.o(i.TIM_TI1_ConfigInputStage)
-    i.TIM_TI2_ConfigInputStage               0x080021f6   Section        0  stm32f1xx_hal_tim.o(i.TIM_TI2_ConfigInputStage)
-    TIM_TI2_ConfigInputStage                 0x080021f7   Thumb Code    36  stm32f1xx_hal_tim.o(i.TIM_TI2_ConfigInputStage)
-    i.UART_DMAAbortOnError                   0x0800221a   Section        0  stm32f1xx_hal_uart.o(i.UART_DMAAbortOnError)
-    UART_DMAAbortOnError                     0x0800221b   Thumb Code    16  stm32f1xx_hal_uart.o(i.UART_DMAAbortOnError)
-    i.UART_EndRxTransfer                     0x0800222a   Section        0  stm32f1xx_hal_uart.o(i.UART_EndRxTransfer)
-    UART_EndRxTransfer                       0x0800222b   Thumb Code    28  stm32f1xx_hal_uart.o(i.UART_EndRxTransfer)
-    i.UART_Receive_IT                        0x08002246   Section        0  stm32f1xx_hal_uart.o(i.UART_Receive_IT)
-    UART_Receive_IT                          0x08002247   Thumb Code   150  stm32f1xx_hal_uart.o(i.UART_Receive_IT)
-    i.UART_SetConfig                         0x080022dc   Section        0  stm32f1xx_hal_uart.o(i.UART_SetConfig)
-    UART_SetConfig                           0x080022dd   Thumb Code   178  stm32f1xx_hal_uart.o(i.UART_SetConfig)
-    i.UART_Transmit_IT                       0x08002394   Section        0  stm32f1xx_hal_uart.o(i.UART_Transmit_IT)
-    UART_Transmit_IT                         0x08002395   Thumb Code    98  stm32f1xx_hal_uart.o(i.UART_Transmit_IT)
-    i.UART_WaitOnFlagUntilTimeout            0x080023f6   Section        0  stm32f1xx_hal_uart.o(i.UART_WaitOnFlagUntilTimeout)
-    UART_WaitOnFlagUntilTimeout              0x080023f7   Thumb Code   100  stm32f1xx_hal_uart.o(i.UART_WaitOnFlagUntilTimeout)
-    i.USART1_IRQHandler                      0x0800245c   Section        0  stm32f1xx_it.o(i.USART1_IRQHandler)
-    i.UsageFault_Handler                     0x08002468   Section        0  stm32f1xx_it.o(i.UsageFault_Handler)
-    i.__0vsprintf                            0x0800246c   Section        0  printfa.o(i.__0vsprintf)
-    i.__NVIC_SetPriority                     0x08002490   Section        0  stm32f1xx_hal_cortex.o(i.__NVIC_SetPriority)
-    __NVIC_SetPriority                       0x08002491   Thumb Code    32  stm32f1xx_hal_cortex.o(i.__NVIC_SetPriority)
-    i.__scatterload_copy                     0x080024b0   Section       14  handlers.o(i.__scatterload_copy)
-    i.__scatterload_null                     0x080024be   Section        2  handlers.o(i.__scatterload_null)
-    i.__scatterload_zeroinit                 0x080024c0   Section       14  handlers.o(i.__scatterload_zeroinit)
-    i._fp_digits                             0x080024d0   Section        0  printfa.o(i._fp_digits)
-    _fp_digits                               0x080024d1   Thumb Code   366  printfa.o(i._fp_digits)
-    i._printf_core                           0x08002654   Section        0  printfa.o(i._printf_core)
-    _printf_core                             0x08002655   Thumb Code  1744  printfa.o(i._printf_core)
-    i._printf_post_padding                   0x08002d30   Section        0  printfa.o(i._printf_post_padding)
-    _printf_post_padding                     0x08002d31   Thumb Code    36  printfa.o(i._printf_post_padding)
-    i._printf_pre_padding                    0x08002d54   Section        0  printfa.o(i._printf_pre_padding)
-    _printf_pre_padding                      0x08002d55   Thumb Code    46  printfa.o(i._printf_pre_padding)
-    i._sputc                                 0x08002d82   Section        0  printfa.o(i._sputc)
-    _sputc                                   0x08002d83   Thumb Code    10  printfa.o(i._sputc)
-    i.main                                   0x08002d8c   Section        0  main.o(i.main)
-    i.trc                                    0x08002fbc   Section        0  main.o(i.trc)
-    .constdata                               0x08002ff4   Section       42  sdcard.o(.constdata)
-    cmd                                      0x08002ff4   Data           6  sdcard.o(.constdata)
-    cmd                                      0x08002ffa   Data           6  sdcard.o(.constdata)
-    cmd                                      0x08003000   Data           6  sdcard.o(.constdata)
-    cmd                                      0x08003006   Data           6  sdcard.o(.constdata)
-    cmd                                      0x0800300c   Data           6  sdcard.o(.constdata)
-    cmd                                      0x08003012   Data           6  sdcard.o(.constdata)
-    cmd                                      0x08003018   Data           6  sdcard.o(.constdata)
-    .constdata                               0x0800301e   Section       16  system_stm32f1xx.o(.constdata)
-    .constdata                               0x0800302e   Section        8  system_stm32f1xx.o(.constdata)
+    i.SDCARD_ReadBytes                       0x08001cc0   Section        0  sdcard.o(i.SDCARD_ReadBytes)
+    SDCARD_ReadBytes                         0x08001cc1   Thumb Code    44  sdcard.o(i.SDCARD_ReadBytes)
+    i.SDCARD_ReadR1                          0x08001cf0   Section        0  sdcard.o(i.SDCARD_ReadR1)
+    SDCARD_ReadR1                            0x08001cf1   Thumb Code    40  sdcard.o(i.SDCARD_ReadR1)
+    i.SDCARD_ReadSingleBlock                 0x08001d1c   Section        0  sdcard.o(i.SDCARD_ReadSingleBlock)
+    i.SDCARD_Select                          0x08001dcc   Section        0  sdcard.o(i.SDCARD_Select)
+    SDCARD_Select                            0x08001dcd   Thumb Code    10  sdcard.o(i.SDCARD_Select)
+    i.SDCARD_Unselect                        0x08001ddc   Section        0  sdcard.o(i.SDCARD_Unselect)
+    i.SDCARD_WaitDataToken                   0x08001dec   Section        0  sdcard.o(i.SDCARD_WaitDataToken)
+    SDCARD_WaitDataToken                     0x08001ded   Thumb Code    48  sdcard.o(i.SDCARD_WaitDataToken)
+    i.SDCARD_WaitNotBusy                     0x08001e20   Section        0  sdcard.o(i.SDCARD_WaitNotBusy)
+    SDCARD_WaitNotBusy                       0x08001e21   Thumb Code    32  sdcard.o(i.SDCARD_WaitNotBusy)
+    i.SDCARD_WriteSingleBlock                0x08001e40   Section        0  sdcard.o(i.SDCARD_WriteSingleBlock)
+    i.SPI1_IRQHandler                        0x08001f1c   Section        0  stm32f1xx_it.o(i.SPI1_IRQHandler)
+    i.SPI_DMAAbortOnError                    0x08001f28   Section        0  stm32f1xx_hal_spi.o(i.SPI_DMAAbortOnError)
+    SPI_DMAAbortOnError                      0x08001f29   Thumb Code    16  stm32f1xx_hal_spi.o(i.SPI_DMAAbortOnError)
+    i.SPI_EndRxTxTransaction                 0x08001f38   Section        0  stm32f1xx_hal_spi.o(i.SPI_EndRxTxTransaction)
+    SPI_EndRxTxTransaction                   0x08001f39   Thumb Code    32  stm32f1xx_hal_spi.o(i.SPI_EndRxTxTransaction)
+    i.SPI_WaitFlagStateUntilTimeout          0x08001f58   Section        0  stm32f1xx_hal_spi.o(i.SPI_WaitFlagStateUntilTimeout)
+    SPI_WaitFlagStateUntilTimeout            0x08001f59   Thumb Code   148  stm32f1xx_hal_spi.o(i.SPI_WaitFlagStateUntilTimeout)
+    i.SVC_Handler                            0x08001fec   Section        0  stm32f1xx_it.o(i.SVC_Handler)
+    i.SystemClock_Config                     0x08001fee   Section        0  main.o(i.SystemClock_Config)
+    i.SystemInit                             0x0800203c   Section        0  system_stm32f1xx.o(i.SystemInit)
+    i.TIM1_UP_IRQHandler                     0x08002084   Section        0  stm32f1xx_it.o(i.TIM1_UP_IRQHandler)
+    i.TIM4_IRQHandler                        0x08002090   Section        0  stm32f1xx_it.o(i.TIM4_IRQHandler)
+    i.TIM_Base_SetConfig                     0x0800209c   Section        0  stm32f1xx_hal_tim.o(i.TIM_Base_SetConfig)
+    i.TIM_ETR_SetConfig                      0x08002108   Section        0  stm32f1xx_hal_tim.o(i.TIM_ETR_SetConfig)
+    i.TIM_ITRx_SetConfig                     0x0800211c   Section        0  stm32f1xx_hal_tim.o(i.TIM_ITRx_SetConfig)
+    TIM_ITRx_SetConfig                       0x0800211d   Thumb Code    16  stm32f1xx_hal_tim.o(i.TIM_ITRx_SetConfig)
+    i.TIM_TI1_ConfigInputStage               0x0800212c   Section        0  stm32f1xx_hal_tim.o(i.TIM_TI1_ConfigInputStage)
+    TIM_TI1_ConfigInputStage                 0x0800212d   Thumb Code    34  stm32f1xx_hal_tim.o(i.TIM_TI1_ConfigInputStage)
+    i.TIM_TI2_ConfigInputStage               0x0800214e   Section        0  stm32f1xx_hal_tim.o(i.TIM_TI2_ConfigInputStage)
+    TIM_TI2_ConfigInputStage                 0x0800214f   Thumb Code    36  stm32f1xx_hal_tim.o(i.TIM_TI2_ConfigInputStage)
+    i.UART_DMAAbortOnError                   0x08002172   Section        0  stm32f1xx_hal_uart.o(i.UART_DMAAbortOnError)
+    UART_DMAAbortOnError                     0x08002173   Thumb Code    16  stm32f1xx_hal_uart.o(i.UART_DMAAbortOnError)
+    i.UART_EndRxTransfer                     0x08002182   Section        0  stm32f1xx_hal_uart.o(i.UART_EndRxTransfer)
+    UART_EndRxTransfer                       0x08002183   Thumb Code    28  stm32f1xx_hal_uart.o(i.UART_EndRxTransfer)
+    i.UART_Receive_IT                        0x0800219e   Section        0  stm32f1xx_hal_uart.o(i.UART_Receive_IT)
+    UART_Receive_IT                          0x0800219f   Thumb Code   150  stm32f1xx_hal_uart.o(i.UART_Receive_IT)
+    i.UART_SetConfig                         0x08002234   Section        0  stm32f1xx_hal_uart.o(i.UART_SetConfig)
+    UART_SetConfig                           0x08002235   Thumb Code   178  stm32f1xx_hal_uart.o(i.UART_SetConfig)
+    i.UART_Transmit_IT                       0x080022ec   Section        0  stm32f1xx_hal_uart.o(i.UART_Transmit_IT)
+    UART_Transmit_IT                         0x080022ed   Thumb Code    98  stm32f1xx_hal_uart.o(i.UART_Transmit_IT)
+    i.UART_WaitOnFlagUntilTimeout            0x0800234e   Section        0  stm32f1xx_hal_uart.o(i.UART_WaitOnFlagUntilTimeout)
+    UART_WaitOnFlagUntilTimeout              0x0800234f   Thumb Code   100  stm32f1xx_hal_uart.o(i.UART_WaitOnFlagUntilTimeout)
+    i.USART1_IRQHandler                      0x080023b4   Section        0  stm32f1xx_it.o(i.USART1_IRQHandler)
+    i.UsageFault_Handler                     0x080023c0   Section        0  stm32f1xx_it.o(i.UsageFault_Handler)
+    i.__0vsprintf                            0x080023c4   Section        0  printfa.o(i.__0vsprintf)
+    i.__NVIC_SetPriority                     0x080023e8   Section        0  stm32f1xx_hal_cortex.o(i.__NVIC_SetPriority)
+    __NVIC_SetPriority                       0x080023e9   Thumb Code    32  stm32f1xx_hal_cortex.o(i.__NVIC_SetPriority)
+    i.__scatterload_copy                     0x08002408   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x08002416   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x08002418   Section       14  handlers.o(i.__scatterload_zeroinit)
+    i._fp_digits                             0x08002428   Section        0  printfa.o(i._fp_digits)
+    _fp_digits                               0x08002429   Thumb Code   366  printfa.o(i._fp_digits)
+    i._printf_core                           0x080025ac   Section        0  printfa.o(i._printf_core)
+    _printf_core                             0x080025ad   Thumb Code  1744  printfa.o(i._printf_core)
+    i._printf_post_padding                   0x08002c88   Section        0  printfa.o(i._printf_post_padding)
+    _printf_post_padding                     0x08002c89   Thumb Code    36  printfa.o(i._printf_post_padding)
+    i._printf_pre_padding                    0x08002cac   Section        0  printfa.o(i._printf_pre_padding)
+    _printf_pre_padding                      0x08002cad   Thumb Code    46  printfa.o(i._printf_pre_padding)
+    i._sputc                                 0x08002cda   Section        0  printfa.o(i._sputc)
+    _sputc                                   0x08002cdb   Thumb Code    10  printfa.o(i._sputc)
+    i.main                                   0x08002ce4   Section        0  main.o(i.main)
+    i.trc                                    0x08002e80   Section        0  main.o(i.trc)
+    .constdata                               0x08002eb8   Section       42  sdcard.o(.constdata)
+    cmd                                      0x08002eb8   Data           6  sdcard.o(.constdata)
+    cmd                                      0x08002ebe   Data           6  sdcard.o(.constdata)
+    cmd                                      0x08002ec4   Data           6  sdcard.o(.constdata)
+    cmd                                      0x08002eca   Data           6  sdcard.o(.constdata)
+    cmd                                      0x08002ed0   Data           6  sdcard.o(.constdata)
+    cmd                                      0x08002ed6   Data           6  sdcard.o(.constdata)
+    cmd                                      0x08002edc   Data           6  sdcard.o(.constdata)
+    .constdata                               0x08002ee2   Section       16  system_stm32f1xx.o(.constdata)
+    .constdata                               0x08002ef2   Section        8  system_stm32f1xx.o(.constdata)
     .data                                    0x20000000   Section    16896  main.o(.data)
     .data                                    0x20004200   Section       12  stm32f1xx_hal.o(.data)
     .data                                    0x2000420c   Section        4  system_stm32f1xx.o(.data)
@@ -1486,37 +1482,33 @@ Image Symbol Table
     NMI_Handler                              0x08001b5b   Thumb Code     2  stm32f1xx_it.o(i.NMI_Handler)
     PendSV_Handler                           0x08001b5d   Thumb Code     2  stm32f1xx_it.o(i.PendSV_Handler)
     SDCARD_Init                              0x08001b61   Thumb Code   344  sdcard.o(i.SDCARD_Init)
-    SDCARD_ReadBegin                         0x08001cc1   Thumb Code    96  sdcard.o(i.SDCARD_ReadBegin)
-    SDCARD_ReadData                          0x08001d5d   Thumb Code    82  sdcard.o(i.SDCARD_ReadData)
-    SDCARD_ReadEnd                           0x08001db1   Thumb Code    66  sdcard.o(i.SDCARD_ReadEnd)
-    SDCARD_Unselect                          0x08001e39   Thumb Code    10  sdcard.o(i.SDCARD_Unselect)
-    SDCARD_WriteBegin                        0x08001e9d   Thumb Code    96  sdcard.o(i.SDCARD_WriteBegin)
-    SDCARD_WriteData                         0x08001f09   Thumb Code   116  sdcard.o(i.SDCARD_WriteData)
-    SDCARD_WriteEnd                          0x08001f85   Thumb Code    60  sdcard.o(i.SDCARD_WriteEnd)
-    SPI1_IRQHandler                          0x08001fc5   Thumb Code     6  stm32f1xx_it.o(i.SPI1_IRQHandler)
-    SVC_Handler                              0x08002095   Thumb Code     2  stm32f1xx_it.o(i.SVC_Handler)
-    SystemClock_Config                       0x08002097   Thumb Code    78  main.o(i.SystemClock_Config)
-    SystemInit                               0x080020e5   Thumb Code    56  system_stm32f1xx.o(i.SystemInit)
-    TIM1_UP_IRQHandler                       0x0800212d   Thumb Code     6  stm32f1xx_it.o(i.TIM1_UP_IRQHandler)
-    TIM4_IRQHandler                          0x08002139   Thumb Code     6  stm32f1xx_it.o(i.TIM4_IRQHandler)
-    TIM_Base_SetConfig                       0x08002145   Thumb Code    94  stm32f1xx_hal_tim.o(i.TIM_Base_SetConfig)
-    TIM_ETR_SetConfig                        0x080021b1   Thumb Code    20  stm32f1xx_hal_tim.o(i.TIM_ETR_SetConfig)
-    USART1_IRQHandler                        0x0800245d   Thumb Code     6  stm32f1xx_it.o(i.USART1_IRQHandler)
-    UsageFault_Handler                       0x08002469   Thumb Code     2  stm32f1xx_it.o(i.UsageFault_Handler)
-    __0vsprintf                              0x0800246d   Thumb Code    30  printfa.o(i.__0vsprintf)
-    __1vsprintf                              0x0800246d   Thumb Code     0  printfa.o(i.__0vsprintf)
-    __2vsprintf                              0x0800246d   Thumb Code     0  printfa.o(i.__0vsprintf)
-    __c89vsprintf                            0x0800246d   Thumb Code     0  printfa.o(i.__0vsprintf)
-    vsprintf                                 0x0800246d   Thumb Code     0  printfa.o(i.__0vsprintf)
-    __scatterload_copy                       0x080024b1   Thumb Code    14  handlers.o(i.__scatterload_copy)
-    __scatterload_null                       0x080024bf   Thumb Code     2  handlers.o(i.__scatterload_null)
-    __scatterload_zeroinit                   0x080024c1   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
-    main                                     0x08002d8d   Thumb Code   290  main.o(i.main)
-    trc                                      0x08002fbd   Thumb Code    50  main.o(i.trc)
-    AHBPrescTable                            0x0800301e   Data          16  system_stm32f1xx.o(.constdata)
-    APBPrescTable                            0x0800302e   Data           8  system_stm32f1xx.o(.constdata)
-    Region$$Table$$Base                      0x08003038   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x08003058   Number         0  anon$$obj.o(Region$$Table)
+    SDCARD_ReadSingleBlock                   0x08001d1d   Thumb Code   164  sdcard.o(i.SDCARD_ReadSingleBlock)
+    SDCARD_Unselect                          0x08001ddd   Thumb Code    10  sdcard.o(i.SDCARD_Unselect)
+    SDCARD_WriteSingleBlock                  0x08001e41   Thumb Code   202  sdcard.o(i.SDCARD_WriteSingleBlock)
+    SPI1_IRQHandler                          0x08001f1d   Thumb Code     6  stm32f1xx_it.o(i.SPI1_IRQHandler)
+    SVC_Handler                              0x08001fed   Thumb Code     2  stm32f1xx_it.o(i.SVC_Handler)
+    SystemClock_Config                       0x08001fef   Thumb Code    78  main.o(i.SystemClock_Config)
+    SystemInit                               0x0800203d   Thumb Code    56  system_stm32f1xx.o(i.SystemInit)
+    TIM1_UP_IRQHandler                       0x08002085   Thumb Code     6  stm32f1xx_it.o(i.TIM1_UP_IRQHandler)
+    TIM4_IRQHandler                          0x08002091   Thumb Code     6  stm32f1xx_it.o(i.TIM4_IRQHandler)
+    TIM_Base_SetConfig                       0x0800209d   Thumb Code    94  stm32f1xx_hal_tim.o(i.TIM_Base_SetConfig)
+    TIM_ETR_SetConfig                        0x08002109   Thumb Code    20  stm32f1xx_hal_tim.o(i.TIM_ETR_SetConfig)
+    USART1_IRQHandler                        0x080023b5   Thumb Code     6  stm32f1xx_it.o(i.USART1_IRQHandler)
+    UsageFault_Handler                       0x080023c1   Thumb Code     2  stm32f1xx_it.o(i.UsageFault_Handler)
+    __0vsprintf                              0x080023c5   Thumb Code    30  printfa.o(i.__0vsprintf)
+    __1vsprintf                              0x080023c5   Thumb Code     0  printfa.o(i.__0vsprintf)
+    __2vsprintf                              0x080023c5   Thumb Code     0  printfa.o(i.__0vsprintf)
+    __c89vsprintf                            0x080023c5   Thumb Code     0  printfa.o(i.__0vsprintf)
+    vsprintf                                 0x080023c5   Thumb Code     0  printfa.o(i.__0vsprintf)
+    __scatterload_copy                       0x08002409   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x08002417   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x08002419   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    main                                     0x08002ce5   Thumb Code   244  main.o(i.main)
+    trc                                      0x08002e81   Thumb Code    50  main.o(i.trc)
+    AHBPrescTable                            0x08002ee2   Data          16  system_stm32f1xx.o(.constdata)
+    APBPrescTable                            0x08002ef2   Data           8  system_stm32f1xx.o(.constdata)
+    Region$$Table$$Base                      0x08002efc   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x08002f1c   Number         0  anon$$obj.o(Region$$Table)
     wav                                      0x20000000   Data       16896  main.o(.data)
     uwTickFreq                               0x20004200   Data           1  stm32f1xx_hal.o(.data)
     uwTickPrio                               0x20004204   Data           4  stm32f1xx_hal.o(.data)
@@ -1536,9 +1528,9 @@ Memory Map of the image
 
   Image Entry point : 0x080000ed
 
-  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x00007268, Max: 0x00010000, ABSOLUTE)
+  Load Region LR_IROM1 (Base: 0x08000000, Size: 0x0000712c, Max: 0x00010000, ABSOLUTE)
 
-    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00003058, Max: 0x00010000, ABSOLUTE)
+    Execution Region ER_IROM1 (Exec base: 0x08000000, Load base: 0x08000000, Size: 0x00002f1c, Max: 0x00010000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -1626,70 +1618,65 @@ Memory Map of the image
     0x08001b5c   0x08001b5c   0x00000002   Code   RO          298    i.PendSV_Handler    stm32f1xx_it.o
     0x08001b5e   0x08001b5e   0x00000002   PAD
     0x08001b60   0x08001b60   0x00000160   Code   RO           14    i.SDCARD_Init       sdcard.o
-    0x08001cc0   0x08001cc0   0x0000006c   Code   RO           15    i.SDCARD_ReadBegin  sdcard.o
-    0x08001d2c   0x08001d2c   0x00000030   Code   RO           16    i.SDCARD_ReadBytes  sdcard.o
-    0x08001d5c   0x08001d5c   0x00000052   Code   RO           17    i.SDCARD_ReadData   sdcard.o
-    0x08001dae   0x08001dae   0x00000002   PAD
-    0x08001db0   0x08001db0   0x0000004c   Code   RO           18    i.SDCARD_ReadEnd    sdcard.o
-    0x08001dfc   0x08001dfc   0x0000002c   Code   RO           19    i.SDCARD_ReadR1     sdcard.o
-    0x08001e28   0x08001e28   0x00000010   Code   RO           21    i.SDCARD_Select     sdcard.o
-    0x08001e38   0x08001e38   0x00000010   Code   RO           22    i.SDCARD_Unselect   sdcard.o
-    0x08001e48   0x08001e48   0x00000034   Code   RO           23    i.SDCARD_WaitDataToken  sdcard.o
-    0x08001e7c   0x08001e7c   0x00000020   Code   RO           24    i.SDCARD_WaitNotBusy  sdcard.o
-    0x08001e9c   0x08001e9c   0x0000006c   Code   RO           25    i.SDCARD_WriteBegin  sdcard.o
-    0x08001f08   0x08001f08   0x0000007c   Code   RO           26    i.SDCARD_WriteData  sdcard.o
-    0x08001f84   0x08001f84   0x00000040   Code   RO           27    i.SDCARD_WriteEnd   sdcard.o
-    0x08001fc4   0x08001fc4   0x0000000c   Code   RO          299    i.SPI1_IRQHandler   stm32f1xx_it.o
-    0x08001fd0   0x08001fd0   0x00000010   Code   RO          560    i.SPI_DMAAbortOnError  stm32f1xx_hal_spi.o
-    0x08001fe0   0x08001fe0   0x00000020   Code   RO          571    i.SPI_EndRxTxTransaction  stm32f1xx_hal_spi.o
-    0x08002000   0x08002000   0x00000094   Code   RO          576    i.SPI_WaitFlagStateUntilTimeout  stm32f1xx_hal_spi.o
-    0x08002094   0x08002094   0x00000002   Code   RO          300    i.SVC_Handler       stm32f1xx_it.o
-    0x08002096   0x08002096   0x0000004e   Code   RO          216    i.SystemClock_Config  main.o
-    0x080020e4   0x080020e4   0x00000048   Code   RO         3074    i.SystemInit        system_stm32f1xx.o
-    0x0800212c   0x0800212c   0x0000000c   Code   RO          301    i.TIM1_UP_IRQHandler  stm32f1xx_it.o
-    0x08002138   0x08002138   0x0000000c   Code   RO          302    i.TIM4_IRQHandler   stm32f1xx_it.o
-    0x08002144   0x08002144   0x0000006c   Code   RO         1909    i.TIM_Base_SetConfig  stm32f1xx_hal_tim.o
-    0x080021b0   0x080021b0   0x00000014   Code   RO         1920    i.TIM_ETR_SetConfig  stm32f1xx_hal_tim.o
-    0x080021c4   0x080021c4   0x00000010   Code   RO         1921    i.TIM_ITRx_SetConfig  stm32f1xx_hal_tim.o
-    0x080021d4   0x080021d4   0x00000022   Code   RO         1927    i.TIM_TI1_ConfigInputStage  stm32f1xx_hal_tim.o
-    0x080021f6   0x080021f6   0x00000024   Code   RO         1929    i.TIM_TI2_ConfigInputStage  stm32f1xx_hal_tim.o
-    0x0800221a   0x0800221a   0x00000010   Code   RO         2785    i.UART_DMAAbortOnError  stm32f1xx_hal_uart.o
-    0x0800222a   0x0800222a   0x0000001c   Code   RO         2795    i.UART_EndRxTransfer  stm32f1xx_hal_uart.o
-    0x08002246   0x08002246   0x00000096   Code   RO         2797    i.UART_Receive_IT   stm32f1xx_hal_uart.o
-    0x080022dc   0x080022dc   0x000000b8   Code   RO         2798    i.UART_SetConfig    stm32f1xx_hal_uart.o
-    0x08002394   0x08002394   0x00000062   Code   RO         2799    i.UART_Transmit_IT  stm32f1xx_hal_uart.o
-    0x080023f6   0x080023f6   0x00000064   Code   RO         2800    i.UART_WaitOnFlagUntilTimeout  stm32f1xx_hal_uart.o
-    0x0800245a   0x0800245a   0x00000002   PAD
-    0x0800245c   0x0800245c   0x0000000c   Code   RO          303    i.USART1_IRQHandler  stm32f1xx_it.o
-    0x08002468   0x08002468   0x00000002   Code   RO          304    i.UsageFault_Handler  stm32f1xx_it.o
-    0x0800246a   0x0800246a   0x00000002   PAD
-    0x0800246c   0x0800246c   0x00000024   Code   RO         3124    i.__0vsprintf       mc_w.l(printfa.o)
-    0x08002490   0x08002490   0x00000020   Code   RO         1332    i.__NVIC_SetPriority  stm32f1xx_hal_cortex.o
-    0x080024b0   0x080024b0   0x0000000e   Code   RO         3189    i.__scatterload_copy  mc_w.l(handlers.o)
-    0x080024be   0x080024be   0x00000002   Code   RO         3190    i.__scatterload_null  mc_w.l(handlers.o)
-    0x080024c0   0x080024c0   0x0000000e   Code   RO         3191    i.__scatterload_zeroinit  mc_w.l(handlers.o)
-    0x080024ce   0x080024ce   0x00000002   PAD
-    0x080024d0   0x080024d0   0x00000184   Code   RO         3125    i._fp_digits        mc_w.l(printfa.o)
-    0x08002654   0x08002654   0x000006dc   Code   RO         3126    i._printf_core      mc_w.l(printfa.o)
-    0x08002d30   0x08002d30   0x00000024   Code   RO         3127    i._printf_post_padding  mc_w.l(printfa.o)
-    0x08002d54   0x08002d54   0x0000002e   Code   RO         3128    i._printf_pre_padding  mc_w.l(printfa.o)
-    0x08002d82   0x08002d82   0x0000000a   Code   RO         3130    i._sputc            mc_w.l(printfa.o)
-    0x08002d8c   0x08002d8c   0x00000230   Code   RO          217    i.main              main.o
-    0x08002fbc   0x08002fbc   0x00000038   Code   RO          218    i.trc               main.o
-    0x08002ff4   0x08002ff4   0x0000002a   Data   RO           29    .constdata          sdcard.o
-    0x0800301e   0x0800301e   0x00000010   Data   RO         3075    .constdata          system_stm32f1xx.o
-    0x0800302e   0x0800302e   0x00000008   Data   RO         3076    .constdata          system_stm32f1xx.o
-    0x08003036   0x08003036   0x00000002   PAD
-    0x08003038   0x08003038   0x00000020   Data   RO         3187    Region$$Table       anon$$obj.o
+    0x08001cc0   0x08001cc0   0x00000030   Code   RO           16    i.SDCARD_ReadBytes  sdcard.o
+    0x08001cf0   0x08001cf0   0x0000002c   Code   RO           19    i.SDCARD_ReadR1     sdcard.o
+    0x08001d1c   0x08001d1c   0x000000b0   Code   RO           20    i.SDCARD_ReadSingleBlock  sdcard.o
+    0x08001dcc   0x08001dcc   0x00000010   Code   RO           21    i.SDCARD_Select     sdcard.o
+    0x08001ddc   0x08001ddc   0x00000010   Code   RO           22    i.SDCARD_Unselect   sdcard.o
+    0x08001dec   0x08001dec   0x00000034   Code   RO           23    i.SDCARD_WaitDataToken  sdcard.o
+    0x08001e20   0x08001e20   0x00000020   Code   RO           24    i.SDCARD_WaitNotBusy  sdcard.o
+    0x08001e40   0x08001e40   0x000000dc   Code   RO           28    i.SDCARD_WriteSingleBlock  sdcard.o
+    0x08001f1c   0x08001f1c   0x0000000c   Code   RO          299    i.SPI1_IRQHandler   stm32f1xx_it.o
+    0x08001f28   0x08001f28   0x00000010   Code   RO          560    i.SPI_DMAAbortOnError  stm32f1xx_hal_spi.o
+    0x08001f38   0x08001f38   0x00000020   Code   RO          571    i.SPI_EndRxTxTransaction  stm32f1xx_hal_spi.o
+    0x08001f58   0x08001f58   0x00000094   Code   RO          576    i.SPI_WaitFlagStateUntilTimeout  stm32f1xx_hal_spi.o
+    0x08001fec   0x08001fec   0x00000002   Code   RO          300    i.SVC_Handler       stm32f1xx_it.o
+    0x08001fee   0x08001fee   0x0000004e   Code   RO          216    i.SystemClock_Config  main.o
+    0x0800203c   0x0800203c   0x00000048   Code   RO         3074    i.SystemInit        system_stm32f1xx.o
+    0x08002084   0x08002084   0x0000000c   Code   RO          301    i.TIM1_UP_IRQHandler  stm32f1xx_it.o
+    0x08002090   0x08002090   0x0000000c   Code   RO          302    i.TIM4_IRQHandler   stm32f1xx_it.o
+    0x0800209c   0x0800209c   0x0000006c   Code   RO         1909    i.TIM_Base_SetConfig  stm32f1xx_hal_tim.o
+    0x08002108   0x08002108   0x00000014   Code   RO         1920    i.TIM_ETR_SetConfig  stm32f1xx_hal_tim.o
+    0x0800211c   0x0800211c   0x00000010   Code   RO         1921    i.TIM_ITRx_SetConfig  stm32f1xx_hal_tim.o
+    0x0800212c   0x0800212c   0x00000022   Code   RO         1927    i.TIM_TI1_ConfigInputStage  stm32f1xx_hal_tim.o
+    0x0800214e   0x0800214e   0x00000024   Code   RO         1929    i.TIM_TI2_ConfigInputStage  stm32f1xx_hal_tim.o
+    0x08002172   0x08002172   0x00000010   Code   RO         2785    i.UART_DMAAbortOnError  stm32f1xx_hal_uart.o
+    0x08002182   0x08002182   0x0000001c   Code   RO         2795    i.UART_EndRxTransfer  stm32f1xx_hal_uart.o
+    0x0800219e   0x0800219e   0x00000096   Code   RO         2797    i.UART_Receive_IT   stm32f1xx_hal_uart.o
+    0x08002234   0x08002234   0x000000b8   Code   RO         2798    i.UART_SetConfig    stm32f1xx_hal_uart.o
+    0x080022ec   0x080022ec   0x00000062   Code   RO         2799    i.UART_Transmit_IT  stm32f1xx_hal_uart.o
+    0x0800234e   0x0800234e   0x00000064   Code   RO         2800    i.UART_WaitOnFlagUntilTimeout  stm32f1xx_hal_uart.o
+    0x080023b2   0x080023b2   0x00000002   PAD
+    0x080023b4   0x080023b4   0x0000000c   Code   RO          303    i.USART1_IRQHandler  stm32f1xx_it.o
+    0x080023c0   0x080023c0   0x00000002   Code   RO          304    i.UsageFault_Handler  stm32f1xx_it.o
+    0x080023c2   0x080023c2   0x00000002   PAD
+    0x080023c4   0x080023c4   0x00000024   Code   RO         3124    i.__0vsprintf       mc_w.l(printfa.o)
+    0x080023e8   0x080023e8   0x00000020   Code   RO         1332    i.__NVIC_SetPriority  stm32f1xx_hal_cortex.o
+    0x08002408   0x08002408   0x0000000e   Code   RO         3189    i.__scatterload_copy  mc_w.l(handlers.o)
+    0x08002416   0x08002416   0x00000002   Code   RO         3190    i.__scatterload_null  mc_w.l(handlers.o)
+    0x08002418   0x08002418   0x0000000e   Code   RO         3191    i.__scatterload_zeroinit  mc_w.l(handlers.o)
+    0x08002426   0x08002426   0x00000002   PAD
+    0x08002428   0x08002428   0x00000184   Code   RO         3125    i._fp_digits        mc_w.l(printfa.o)
+    0x080025ac   0x080025ac   0x000006dc   Code   RO         3126    i._printf_core      mc_w.l(printfa.o)
+    0x08002c88   0x08002c88   0x00000024   Code   RO         3127    i._printf_post_padding  mc_w.l(printfa.o)
+    0x08002cac   0x08002cac   0x0000002e   Code   RO         3128    i._printf_pre_padding  mc_w.l(printfa.o)
+    0x08002cda   0x08002cda   0x0000000a   Code   RO         3130    i._sputc            mc_w.l(printfa.o)
+    0x08002ce4   0x08002ce4   0x0000019c   Code   RO          217    i.main              main.o
+    0x08002e80   0x08002e80   0x00000038   Code   RO          218    i.trc               main.o
+    0x08002eb8   0x08002eb8   0x0000002a   Data   RO           29    .constdata          sdcard.o
+    0x08002ee2   0x08002ee2   0x00000010   Data   RO         3075    .constdata          system_stm32f1xx.o
+    0x08002ef2   0x08002ef2   0x00000008   Data   RO         3076    .constdata          system_stm32f1xx.o
+    0x08002efa   0x08002efa   0x00000002   PAD
+    0x08002efc   0x08002efc   0x00000020   Data   RO         3187    Region$$Table       anon$$obj.o
 
 
-    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08003058, Size: 0x00004728, Max: 0x00005000, ABSOLUTE)
+    Execution Region RW_IRAM1 (Exec base: 0x20000000, Load base: 0x08002f1c, Size: 0x00004728, Max: 0x00005000, ABSOLUTE)
 
     Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x08003058   0x00004200   Data   RW          220    .data               main.o
-    0x20004200   0x08007258   0x0000000c   Data   RW          869    .data               stm32f1xx_hal.o
-    0x2000420c   0x08007264   0x00000004   Data   RW         3077    .data               system_stm32f1xx.o
+    0x20000000   0x08002f1c   0x00004200   Data   RW          220    .data               main.o
+    0x20004200   0x0800711c   0x0000000c   Data   RW          869    .data               stm32f1xx_hal.o
+    0x2000420c   0x08007128   0x00000004   Data   RW         3077    .data               system_stm32f1xx.o
     0x20004210        -       0x000000d8   Zero   RW          219    .bss                main.o
     0x200042e8        -       0x00000040   Zero   RW          450    .bss                stm32f1xx_hal_timebase_tim.o
     0x20004328        -       0x00000400   Zero   RW            1    STACK               startup_stm32f103xb.o
@@ -1702,8 +1689,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       854        300          0      16896        216       5243   main.o
-      1122         78         42          0          0     437136   sdcard.o
+       706        198          0      16896        216       5247   main.o
+       956         62         42          0          0     435593   sdcard.o
         36          8        236          0       1024        800   startup_stm32f103xb.o
         64         14          0         12          0       4622   stm32f1xx_hal.o
        158         14          0          0          0      28178   stm32f1xx_hal_cortex.o
@@ -1720,9 +1707,9 @@ Image component sizes
         72         16         24          4          0       1151   system_stm32f1xx.o
 
     ----------------------------------------------------------------------
-      8324        692        336      16912       1304     525174   Object Totals
+      8008        574        336      16912       1304     523635   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-        18          0          2          0          0          0   (incl. Padding)
+        16          0          2          0          0          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -1775,15 +1762,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-     12040        794        336      16912       1304     521710   Grand Totals
-     12040        794        336      16912       1304     521710   ELF Image Totals
-     12040        794        336      16912          0          0   ROM Totals
+     11724        676        336      16912       1304     520379   Grand Totals
+     11724        676        336      16912       1304     520379   ELF Image Totals
+     11724        676        336      16912          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                12376 (  12.09kB)
+    Total RO  Size (Code + RO Data)                12060 (  11.78kB)
     Total RW  Size (RW Data + ZI Data)             18216 (  17.79kB)
-    Total ROM Size (Code + RO Data + RW Data)      29288 (  28.60kB)
+    Total ROM Size (Code + RO Data + RW Data)      28972 (  28.29kB)
 
 ==============================================================================
 

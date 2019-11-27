@@ -128,19 +128,19 @@ int main(void)
     uint16_t cnt_sec = sizeof(wav)/512;
     uint16_t it_sec = 1;
 
-    for(it_sec = 0; it_sec < 1; it_sec++) {
-        TRACE("SDCARD_WriteBegin %04X blocks %u\r\n", SDCARD_WriteBegin(it_sec), it_sec);
-        TRACE("SDCARD_WriteData %04X\r\n", SDCARD_WriteData(&wav[it_sec*512])); // sizeof(buff) == 512!
-        TRACE("SDCARD_WriteEnd %04X\r\n", SDCARD_WriteEnd());
+    for(it_sec = 0; it_sec < cnt_sec; it_sec++) {
+        //TRACE("SDCARD_WriteBegin %04X blocks %u\r\n", SDCARD_WriteBegin(it_sec), it_sec);
+        TRACE("SDCARD_WriteData sector N#%u %04X\r\n", it_sec, SDCARD_WriteSingleBlock(it_sec, &wav[it_sec*512])); // sizeof(buff) == 512!
+        //TRACE("SDCARD_WriteEnd %04X\r\n", SDCARD_WriteEnd());
     }
 
     memset(buff, 0, 512);
-    TRACE("SDCARD_ReadBegin %04X sector %u\r\n", SDCARD_ReadBegin(it_sec - 1), it_sec - 1);
-    TRACE("SDCARD_ReadData %04X\r\n", SDCARD_ReadData(buff)); // sizeof(buff) == 512!
-    TRACE("SDCARD_ReadEnd %04X\r\n", SDCARD_ReadEnd());
+    TRACE("SDCARD_ReadBegin %04X sector %u\r\n", SDCARD_ReadSingleBlock(it_sec - 1, buff), it_sec - 1);
+    //TRACE("SDCARD_ReadData %04X\r\n", SDCARD_ReadData(buff)); // sizeof(buff) == 512!
+    //TRACE("SDCARD_ReadEnd %04X\r\n", SDCARD_ReadEnd());
 
     for(uint16_t it = 0; it < 512; it+=4) {
-        TRACE("sector N#%04X four byte %04u data %04X\r\n", it_sec - 1, it, *(uint32_t *)&buff[it]);
+        TRACE("sector N#%u four byte %04u data %04X\r\n", it_sec - 1, it, *(uint32_t *)&buff[it]);
     }
 
   while (1)
